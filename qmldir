@@ -1,0 +1,3 @@
+module apps.webcam
+WebcamApp 1.0 WebcamApp.qml
+WebcamTile 1.0 WebcamTile.qml
