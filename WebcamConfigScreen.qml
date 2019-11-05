@@ -1,4 +1,4 @@
-import QtQuick 1.1
+import QtQuick 2.1
 import qb.components 1.0
 
 Screen {
@@ -8,22 +8,22 @@ Screen {
 
 	function saveWebcamImageURL1(text) {
 		if (text) {
-			app.webcamImageURL1 = text;
+			app.settings["webcamImageURL1"] = text;
 	   		var doc2 = new XMLHttpRequest();
-   			doc2.open("PUT", "file:///HCBv2/qml/apps/webcam/selectedImageURL1.txt");
-   			doc2.send(app.webcamImageURL1);
+   			doc2.open("PUT", "file:///mnt/data/tsc/webcam.userSettings.json");
+   			doc2.send(JSON.stringify(app.settings));
 		}
 	}
 
 	onShown: {
-		webcamImageURL1.inputText = app.webcamImageURL1;
+		webcamImageURL1.inputText = app.settings["webcamImageURL1"];
 	}
 
-	EditTextLabel {
+	EditTextLabel4421 {
 		id: webcamImageURL1
 		width: parent.width - 40
-		height: 35
-		leftTextAvailableWidth: 200
+		height: isNxt ? 45 : 36
+		leftTextAvailableWidth: isNxt ? 250 : 200
 		leftText: "URL webcam image"
 
 		anchors {

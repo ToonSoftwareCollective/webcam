@@ -1,4 +1,4 @@
-import QtQuick 1.1
+import QtQuick 2.1
 //import qb.base 1.0
 import qb.components 1.0
 
@@ -17,7 +17,7 @@ Tile {
 	Image {
 		id: tileWebcamImage1
     		width: 200; height: 140
-		source: "./drawables/webcam_large.jpg"
+		source: "qrc:/tsc/webcam_large.jpg"
 		anchors {
 			verticalCenter: parent.verticalCenter
 			horizontalCenter: parent.horizontalCenter

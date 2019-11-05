@@ -1,3 +1,7 @@
+Version 1.0.5
+- settings are now stored in the /mnt/data/tsc folder
+- compatible with firmware 5 only, support for lower firmwares has been dropped
+
 Version 1.0.3
 - firmware 5 compatibility
 

@@ -1,12 +1,13 @@
-import QtQuick 1.1
+import QtQuick 2.1
 import qb.components 1.0
 import qb.base 1.0;
+import FileIO 1.0
 
 App {
 	id: webcamApp
 
 	property url 	tileUrl : "WebcamTile.qml"
-	property url 	thumbnailIcon: "./drawables/webcam.png"
+	property url 	thumbnailIcon: "qrc:/tsc/webcam.png"
 	property 		WebcamFullScreen webcamFullScreen
 	property 		WebcamConfigScreen webcamConfigScreen
 	property 		WebcamTile webcamTile
@@ -22,10 +23,14 @@ App {
 	property int 	pictureCountdownCounter: 100
 	property int 	webcamTimer1Interval: 1000
 	property bool 	webcamTimer1Running: false
-//	property string 	webcamImageURL1 : "http://192.168.42.8/live/1/jpeg.jpg";
-//	property string 	webcamImageURL1 : "http://69.203.221.199:8000/jpg/image.jpg";
-//	property string 	webcamImageURL1 : "http://61.216.15.197/axis-cgi/jpg/image.cgi?camera=1&resolution=320x240&compression=25";
-	property string 	webcamImageURL1 : "http://91.133.85.170:8090/record/current.jpg"
+	property variant settings: { 
+		"webcamImageURL1" : "http://91.133.85.170:8090/record/current.jpg"
+	}
+
+	FileIO {
+		id: webcamSettingsFile
+		source: "file:///mnt/data/tsc/webcam.userSettings.json"
+ 	}
 
 	QtObject {
 		id: p
@@ -37,8 +42,8 @@ App {
 		registry.registerWidget("tile", tileUrl, this, "webcamTile", {thumbLabel: qsTr("Webcam"), thumbIcon: thumbnailIcon, thumbCategory: "general", thumbWeight: 30, baseTileWeight: 10, baseTileSolarWeight: 10, thumbIconVAlignment: "center"});
 		registry.registerWidget("screen", p.webcamFullScreenUrl, this, "webcamFullScreen");
 		registry.registerWidget("screen", p.webcamConfigScreenUrl, this, "webcamConfigScreen");
-		webcamImage1Source = webcamImageURL1;
-		webcamImage2Source = webcamImageURL1;
+		webcamImage1Source = settings["webcamImageURL1"];
+		webcamImage2Source = settings["webcamImageURL1"];
 		webcamImage1Z = 0;
 		webcamImage2Z = 100;
 	}
@@ -49,7 +54,12 @@ App {
 	}
 
 	Component.onCompleted: {
-		readDefaults();
+
+		// read user settings
+		try {
+			settings = JSON.parse(webcamSettingsFile.read());
+		} catch(e) {
+		}
 		console.log("webcam: listProperty(screenStateController)")
 		listProperty(screenStateController)
 	}
@@ -60,7 +70,7 @@ App {
 			switch(pictureCycleCounter) {
 			case 0:
 				webcamImage2Source = ""
-				webcamImage2Source = webcamImageURL1
+				webcamImage2Source = settings["webcamImageURL1"]
 				pictureCycleCounter = pictureCycleCounter + 1
 				break
 			case 1:
@@ -73,7 +83,7 @@ App {
 				break
 			case 2:
 				webcamImage1Source = ""
-				webcamImage1Source = webcamImageURL1
+				webcamImage1Source = settings["webcamImageURL1"]
 				pictureCycleCounter = pictureCycleCounter + 1
 				break
 			case 3:
@@ -95,18 +105,5 @@ App {
 		running: webcamTimer1Running
 		repeat: true
 		onTriggered: updateWebcamImage1()
-	}
-
-	function readDefaults() {
-		var doc1 = new XMLHttpRequest();
-		doc1.onreadystatechange = function() {
-			if (doc1.readyState == XMLHttpRequest.DONE) {
-				if (doc1.responseText.length > 8) {
-					webcamImageURL1 = doc1.responseText;
-				}
- 			}
-		}
-		doc1.open("GET", "file:///HCBv2/qml/apps/webcam/selectedImageURL1.txt", true);
-		doc1.send();
 	}
 }
